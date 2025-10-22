@@ -105,8 +105,8 @@ export default function Dashboard() {
       color: 'hsl(var(--primary))',
     },
     fundsUtilized: {
-      label: 'Funds Utilized (₹ Lakhs)',
-      color: 'hsl(var(--accent))',
+      label: 'Funds Utilized (Rs. Lakhs)',
+      color: 'hsl(var(--chart-2))',
     },
   };
   
@@ -190,7 +190,7 @@ export default function Dashboard() {
                 <IndianRupee className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{performance?.totalFundsUtilized.toLocaleString()} L</div>
+                <div className="text-2xl font-bold">Rs. {performance?.totalFundsUtilized.toLocaleString()} L</div>
                 <p className="text-xs text-muted-foreground">Total for the last year</p>
               </CardContent>
             </Card>
@@ -200,7 +200,7 @@ export default function Dashboard() {
                  <IndianRupee className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{performance?.averageWage.toLocaleString()}</div>
+                <div className="text-2xl font-bold">Rs. {performance?.averageWage.toLocaleString()}</div>
                 <p className="text-xs text-muted-foreground">Compared to state average</p>
               </CardContent>
             </Card>
@@ -220,16 +220,18 @@ export default function Dashboard() {
              <Card>
               <CardHeader>
                 <CardTitle>Historical Performance</CardTitle>
-                <CardDescription>Person-days generated over the last 12 months.</CardDescription>
+                <CardDescription>Person-days generated and funds utilized over the last 12 months.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ChartContainer config={chartConfig} className="aspect-video h-[250px] w-full">
                   <LineChart data={performance?.historicalData}>
                     <CartesianGrid vertical={false} />
                     <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
-                    <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => (value as number / 1000) + 'k'}/>
-                    <Tooltip content={<ChartTooltipContent />} />
-                    <Line dataKey="personDays" type="monotone" stroke="var(--color-personDays)" strokeWidth={2} dot={false} />
+                    <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(value) => (value as number / 1000) + 'k'}/>
+                    <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(value) => `Rs. ${(value as number / 100)} L`}/>
+                    <Tooltip content={<ChartTooltipContent indicator="dot" />} />
+                    <Line yAxisId="left" dataKey="personDays" type="monotone" stroke="var(--color-personDays)" strokeWidth={2} dot={false} name="Person-Days" />
+                    <Line yAxisId="right" dataKey="fundsUtilized" type="monotone" stroke="var(--color-fundsUtilized)" strokeWidth={2} dot={false} name="Funds Utilized" />
                   </LineChart>
                 </ChartContainer>
               </CardContent>
@@ -245,7 +247,7 @@ export default function Dashboard() {
                       <CartesianGrid vertical={false} />
                       <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
                       <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => (value as number / 100000) + 'L'}/>
-                      <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} content={<ChartTooltipContent />} />
+                      <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} content={<ChartTooltipContent hideLabel />} />
                       <Bar dataKey="personDays" radius={4}>
                         {comparisonData.map((entry) => (
                            <div key={entry.name} className={entry.isCurrent ? 'fill-primary' : 'fill-primary/30'} />

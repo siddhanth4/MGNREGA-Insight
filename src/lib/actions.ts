@@ -14,8 +14,8 @@ export async function getAiSummaryAction(
             stateName,
             performanceData: JSON.stringify({
                 "Total Person-Days Generated": performanceData.totalPersonDays.toLocaleString(),
-                "Total Funds Utilized (in Lakhs)": `₹${performanceData.totalFundsUtilized.toLocaleString()}`,
-                "Average Daily Wage": `₹${performanceData.averageWage.toLocaleString()}`,
+                "Total Funds Utilized (in Lakhs)": `Rs. ${performanceData.totalFundsUtilized.toLocaleString()}`,
+                "Average Daily Wage": `Rs. ${performanceData.averageWage.toLocaleString()}`,
                 "Number of Works Completed": performanceData.worksCompleted.toLocaleString(),
             }),
         });
