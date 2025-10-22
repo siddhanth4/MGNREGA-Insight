@@ -4,9 +4,9 @@ import { useState, useEffect, useMemo, useTransition } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { BrainCircuit, IndianRupee, MapPin, Users } from 'lucide-react';
 
-import { mgnregaData } from '@/lib/data';
 import type { District, PerformanceData, State } from '@/lib/types';
 import { getAiSummaryAction } from '@/lib/actions';
+import { fetchMgnregaData } from '@/lib/api';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -17,11 +17,12 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ChartConfig, ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
 export default function Dashboard() {
-  const [states] = useState<State[]>(mgnregaData);
-  const [selectedState, setSelectedState] = useState<State | null>(states[0] || null);
-  const [districts, setDistricts] = useState<District[]>(states[0]?.districts || []);
-  const [selectedDistrict, setSelectedDistrict] = useState<District | null>(states[0]?.districts[0] || null);
+  const [states, setStates] = useState<State[]>([]);
+  const [selectedState, setSelectedState] = useState<State | null>(null);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
   
+  const [isLoading, setIsLoading] = useState(true);
   const [isLocating, setIsLocating] = useState(true);
   const [locationSuggestion, setLocationSuggestion] = useState<string | null>(null);
 
@@ -31,23 +32,48 @@ export default function Dashboard() {
   const { toast } = useToast();
 
   useEffect(() => {
+    async function loadData() {
+      try {
+        const data = await fetchMgnregaData();
+        setStates(data);
+        // Set default selection
+        if (data.length > 0) {
+          const defaultState = data.find(s => s.name === 'Maharashtra') || data[0];
+          setSelectedState(defaultState);
+          setDistricts(defaultState.districts);
+          if (defaultState.districts.length > 0) {
+            setSelectedDistrict(defaultState.districts[0]);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        toast({
+          variant: "destructive",
+          title: "Failed to load data",
+          description: "Could not fetch MGNREGA data from the server. Please check your API key or try again later.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadData();
+
     // A mock function to suggest a district based on location.
-    // In a real app, you'd use a reverse geocoding API.
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        // Mocking location check for Pune, Maharashtra
         if (latitude > 18.4 && latitude < 18.6 && longitude > 73.8 && longitude < 74.0) {
           setLocationSuggestion('Pune');
         }
         setIsLocating(false);
       },
       () => {
-        setIsLocating(false); // Stop loading even if permission is denied
+        setIsLocating(false);
       },
       { timeout: 5000 }
     );
-  }, []);
+  }, [toast]);
   
   const handleUseSuggestion = () => {
     if (locationSuggestion) {
@@ -125,9 +151,27 @@ export default function Dashboard() {
     },
   }
 
+  if (isLoading) {
+    return (
+      <div className="grid gap-6">
+        <div className="grid md:grid-cols-2 gap-4">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 w-full" />)}
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Skeleton className="h-80 w-full" />
+          <Skeleton className="h-80 w-full" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-6">
-      {locationSuggestion && (
+      {locationSuggestion && !isLoading && (
          <Alert>
            <MapPin className="h-4 w-4" />
            <AlertTitle>Location Suggestion</AlertTitle>
@@ -259,7 +303,7 @@ export default function Dashboard() {
                       <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} content={<ChartTooltipContent hideLabel />} />
                       <Bar dataKey="personDays" radius={4}>
                         {comparisonData.map((entry) => (
-                           <Cell key={entry.name} fill={entry.isCurrent ? "var(--color-personDays)" : "var(--color-personDays)"} opacity={entry.isCurrent ? 1 : 0.3} />
+                           <Cell key={entry.name} fill={entry.isCurrent ? "hsl(var(--chart-1))" : "hsl(var(--chart-3))"} opacity={entry.isCurrent ? 1 : 0.4} />
                         ))}
                       </Bar>
                     </BarChart>

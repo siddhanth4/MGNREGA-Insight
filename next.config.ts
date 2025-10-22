@@ -30,6 +30,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  env: {
+    DATA_GOV_API_KEY: process.env.DATA_GOV_API_KEY,
+  }
 };
 
 export default nextConfig;
