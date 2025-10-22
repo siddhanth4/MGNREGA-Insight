@@ -2,7 +2,6 @@
 
 import { generatePlainLanguageSummary } from '@/ai/flows/generate-plain-language-summary';
 import type { PerformanceData } from '@/lib/types';
-import { getMockMgnregaData } from '@/lib/api';
 
 export async function getAiSummaryAction(
   districtName: string,
@@ -25,8 +24,4 @@ export async function getAiSummaryAction(
     console.error('AI summary generation failed:', error);
     return 'Sorry, we couldn\'t generate a summary at this time. Please try again later.';
   }
-}
-
-export async function fetchMgnregaDataAction() {
-    return getMockMgnregaData();
 }
