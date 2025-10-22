@@ -105,15 +105,16 @@ export default function Dashboard() {
   const handleGenerateSummary = () => {
     if (!selectedDistrict || !selectedState) return;
     startAiTransition(async () => {
-        const performanceData = selectedDistrict.performance;
-        const summary = await getAiSummaryAction(
-            selectedDistrict.name,
-            selectedState.name,
-            performanceData,
-        );
-        if (typeof summary === 'string') {
-            setAiSummary(summary);
-        } else {
+        try {
+          const performanceData = selectedDistrict.performance;
+          const summary = await getAiSummaryAction(
+              selectedDistrict.name,
+              selectedState.name,
+              performanceData,
+          );
+          setAiSummary(summary);
+        } catch (error) {
+            console.error(error);
             toast({
                 variant: 'destructive',
                 title: 'Error',
