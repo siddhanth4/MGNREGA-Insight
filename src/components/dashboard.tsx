@@ -105,20 +105,21 @@ export default function Dashboard() {
   const handleGenerateSummary = () => {
     if (!selectedDistrict || !selectedState) return;
     startAiTransition(async () => {
-      const summary = await getAiSummaryAction(
-        selectedDistrict.name,
-        selectedState.name,
-        selectedDistrict.performance
-      );
-      if (typeof summary === 'string') {
-        setAiSummary(summary);
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to generate summary.",
-        })
-      }
+        const performanceData = selectedDistrict.performance;
+        const summary = await getAiSummaryAction(
+            selectedDistrict.name,
+            selectedState.name,
+            performanceData,
+        );
+        if (typeof summary === 'string') {
+            setAiSummary(summary);
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Failed to generate summary.',
+            });
+        }
     });
   };
 
@@ -147,7 +148,7 @@ export default function Dashboard() {
   const comparisonChartConfig: ChartConfig = {
     personDays: {
       label: "Person-Days",
-      color: "hsl(var(--chart-3))",
+      color: "hsl(var(--chart-2))",
     },
   };
 
@@ -274,7 +275,7 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle>Historical Performance</CardTitle>
                 <CardDescription>Person-days generated and funds utilized over the last 12 months.</CardDescription>
-              </Header>
+              </CardHeader>
               <CardContent>
                 <ChartContainer config={chartConfig} className="aspect-video h-[250px] w-full">
                   <LineChart data={performance?.historicalData}>
@@ -303,7 +304,7 @@ export default function Dashboard() {
                       <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} content={<ChartTooltipContent hideLabel />} />
                       <Bar dataKey="personDays" radius={4}>
                         {comparisonData.map((entry) => (
-                           <Cell key={entry.name} fill={entry.isCurrent ? "hsl(var(--chart-1))" : "hsl(var(--chart-3))"} opacity={entry.isCurrent ? 1 : 0.4} />
+                           <Cell key={entry.name} fill={entry.isCurrent ? "hsl(var(--chart-1))" : "hsl(var(--chart-2))"} opacity={entry.isCurrent ? 1 : 0.4} />
                         ))}
                       </Bar>
                     </BarChart>
