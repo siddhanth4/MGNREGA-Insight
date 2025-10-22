@@ -5,8 +5,7 @@ import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ResponsiveContaine
 import { BrainCircuit, IndianRupee, MapPin, Users } from 'lucide-react';
 
 import type { District, PerformanceData, State } from '@/lib/types';
-import { getAiSummaryAction } from '@/lib/actions';
-import { fetchMgnregaData } from '@/lib/api';
+import { getAiSummaryAction, fetchMgnregaDataAction } from '@/lib/actions';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -34,7 +33,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadData() {
       try {
-        const data = await fetchMgnregaData();
+        const data = await fetchMgnregaDataAction();
         setStates(data);
         // Set default selection
         if (data.length > 0) {
@@ -244,7 +243,7 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">Rs. {performance?.totalFundsUtilized.toLocaleString()} L</div>
-                <p className="text-xs text-muted-foreground">Total for the last year</p>
+                <p className="text-xs text-muted-foreground">Total for the last year</p>              
               </CardContent>
             </Card>
             <Card>
