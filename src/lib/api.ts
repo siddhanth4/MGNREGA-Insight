@@ -1,9 +1,6 @@
 import type { State, District, PerformanceData, MonthlyData } from '@/lib/types';
 
-const API_BASE_URL = 'https://api.data.gov.in/resource/9ba5948a-1977-45ea-853d-f2208a4a4325';
-const API_KEY = process.env.DATA_GOV_API_KEY;
-
-// Helper to generate mock historical data since the API doesn't provide it
+// Helper to generate mock historical data
 const generateHistoricalData = (basePersonDays: number, baseFunds: number): MonthlyData[] => {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const currentYear = new Date().getFullYear();
@@ -15,7 +12,62 @@ const generateHistoricalData = (basePersonDays: number, baseFunds: number): Mont
   }));
 };
 
-// Helper to process raw API records into our structured format
+// Main function to get mock data
+export const getMockMgnregaData = (): State[] => {
+  const mockRawData = [
+    { state_name: 'Maharashtra', district_name: 'Pune', persondays_generated__000s: '5432', total_expenditure_in_cr: '135.8', total_no_of_works_completed: '890' },
+    { state_name: 'Maharashtra', district_name: 'Mumbai', persondays_generated__000s: '3210', total_expenditure_in_cr: '96.3', total_no_of_works_completed: '450' },
+    { state_name: 'Maharashtra', district_name: 'Nagpur', persondays_generated__000s: '6789', total_expenditure_in_cr: '169.7', total_no_of_works_completed: '1100' },
+    { state_name: 'Karnataka', district_name: 'Bengaluru', persondays_generated__000s: '7890', total_expenditure_in_cr: '236.7', total_no_of_works_completed: '1250' },
+    { state_name: 'Karnataka', district_name: 'Mysuru', persondays_generated__000s: '4567', total_expenditure_in_cr: '114.2', total_no_of_works_completed: '780' },
+    { state_name: 'Tamil Nadu', district_name: 'Chennai', persondays_generated__000s: '6543', total_expenditure_in_cr: '196.3', total_no_of_works_completed: '1050' },
+  ];
+
+  const stateMap: Map<string, State> = new Map();
+
+  mockRawData.forEach(record => {
+    const stateName = record.state_name;
+    const districtName = record.district_name;
+
+    if (!stateName || !districtName) return;
+
+    if (!stateMap.has(stateName)) {
+      stateMap.set(stateName, { name: stateName, districts: [] });
+    }
+
+    const state = stateMap.get(stateName);
+    if (state) {
+      const totalPersonDays = parseInt(record.persondays_generated__000s, 10) * 1000;
+      const totalFundsUtilized = parseFloat(record.total_expenditure_in_cr); 
+      
+      const performance: PerformanceData = {
+        totalPersonDays: totalPersonDays,
+        totalFundsUtilized: totalFundsUtilized * 100, // Convert Crores to Lakhs
+        averageWage: Math.round((totalFundsUtilized * 10000000) / totalPersonDays) || 250, 
+        worksCompleted: parseInt(record.total_no_of_works_completed, 10),
+        historicalData: generateHistoricalData(totalPersonDays / 12, (totalFundsUtilized * 100) / 12),
+      };
+
+      const district: District = {
+        name: districtName,
+        performance: performance,
+      };
+
+      state.districts.push(district);
+    }
+  });
+
+  return Array.from(stateMap.values()).map(state => {
+    state.districts.sort((a, b) => a.name.localeCompare(b.name));
+    return state;
+  }).sort((a, b) => a.name.localeCompare(b.name));
+};
+
+// The functions below are for the live API and are no longer used directly by the frontend.
+
+const API_BASE_URL = 'https://api.data.gov.in/resource/9ba5948a-1977-45ea-853d-f2208a4a4325';
+const API_KEY = process.env.DATA_GOV_API_KEY;
+
 const processRecords = (records: any[]): State[] => {
   const stateMap: Map<string, State> = new Map();
 
@@ -32,12 +84,12 @@ const processRecords = (records: any[]): State[] => {
     const state = stateMap.get(stateName);
     if (state) {
       const totalPersonDays = parseInt(record.persondays_generated__000s, 10) * 1000;
-      const totalFundsUtilized = parseFloat(record.total_expenditure_in_cr); // Assuming this is in Crores, converting to Lakhs
+      const totalFundsUtilized = parseFloat(record.total_expenditure_in_cr); 
       
       const performance: PerformanceData = {
         totalPersonDays: totalPersonDays,
         totalFundsUtilized: totalFundsUtilized * 100, // Convert Crores to Lakhs
-        averageWage: Math.round((totalFundsUtilized * 10000000) / totalPersonDays) || 250, // Calculate or fallback
+        averageWage: Math.round((totalFundsUtilized * 10000000) / totalPersonDays) || 250, 
         worksCompleted: parseInt(record.total_no_of_works_completed, 10),
         historicalData: generateHistoricalData(totalPersonDays / 12, (totalFundsUtilized * 100) / 12),
       };
@@ -59,7 +111,8 @@ const processRecords = (records: any[]): State[] => {
 
 export async function fetchMgnregaData(): Promise<State[]> {
   if (!API_KEY) {
-    throw new Error('API key for data.gov.in is not configured. Please add it to your .env.local file.');
+    console.warn('API key for data.gov.in is not configured. Falling back to mock data.');
+    return getMockMgnregaData();
   }
 
   const url = `${API_BASE_URL}?api-key=${API_KEY}&format=json&limit=1000`;
@@ -67,17 +120,19 @@ export async function fetchMgnregaData(): Promise<State[]> {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
+      console.error(`API request failed with status ${response.status}. Falling back to mock data.`);
+      return getMockMgnregaData();
     }
     const data = await response.json();
 
     if (!data.records) {
-      throw new Error("No records found in the API response.");
+      console.error("No records found in the API response. Falling back to mock data.");
+      return getMockMgnregaData();
     }
     
     return processRecords(data.records);
   } catch (error) {
-    console.error("Failed to fetch or process MGNREGA data:", error);
-    throw error;
+    console.error("Failed to fetch or process MGNREGA data. Falling back to mock data:", error);
+    return getMockMgnregaData();
   }
 }

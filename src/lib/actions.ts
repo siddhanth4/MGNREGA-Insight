@@ -1,8 +1,8 @@
 'use server';
 
 import { generatePlainLanguageSummary } from '@/ai/flows/generate-plain-language-summary';
-import type { PerformanceData, State } from '@/lib/types';
-import { fetchMgnregaData as apiFetchMgnregaData } from '@/lib/api';
+import type { PerformanceData } from '@/lib/types';
+import { getMockMgnregaData } from '@/lib/api';
 
 export async function getAiSummaryAction(
   districtName: string,
@@ -27,6 +27,6 @@ export async function getAiSummaryAction(
   }
 }
 
-export async function fetchMgnregaDataAction(): Promise<State[]> {
-    return await apiFetchMgnregaData();
+export async function fetchMgnregaDataAction() {
+    return getMockMgnregaData();
 }

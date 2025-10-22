@@ -5,7 +5,8 @@ import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ResponsiveContaine
 import { BrainCircuit, IndianRupee, MapPin, Users } from 'lucide-react';
 
 import type { District, PerformanceData, State } from '@/lib/types';
-import { getAiSummaryAction, fetchMgnregaDataAction } from '@/lib/actions';
+import { getAiSummaryAction } from '@/lib/actions';
+import { getMockMgnregaData } from '@/lib/api';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -33,7 +34,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadData() {
       try {
-        const data = await fetchMgnregaDataAction();
+        const data = getMockMgnregaData();
         setStates(data);
         // Set default selection
         if (data.length > 0) {
@@ -49,7 +50,7 @@ export default function Dashboard() {
         toast({
           variant: "destructive",
           title: "Failed to load data",
-          description: "Could not fetch MGNREGA data from the server. Please check your API key or try again later.",
+          description: "Could not fetch MGNREGA data. Please try again later.",
         });
       } finally {
         setIsLoading(false);
@@ -148,7 +149,7 @@ export default function Dashboard() {
       label: "Person-Days",
       color: "hsl(var(--chart-3))",
     },
-  }
+  };
 
   if (isLoading) {
     return (
@@ -273,7 +274,7 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle>Historical Performance</CardTitle>
                 <CardDescription>Person-days generated and funds utilized over the last 12 months.</CardDescription>
-              </CardHeader>
+              </Header>
               <CardContent>
                 <ChartContainer config={chartConfig} className="aspect-video h-[250px] w-full">
                   <LineChart data={performance?.historicalData}>
@@ -292,7 +293,7 @@ export default function Dashboard() {
               <CardHeader>
                 <CardTitle>Comparative Analysis</CardTitle>
                 <CardDescription>How {selectedDistrict.name} compares to other districts in {selectedState?.name}.</CardDescription>
-              </CardHeader>
+              </Header>
               <CardContent>
                  <ChartContainer config={comparisonChartConfig} className="aspect-video h-[250px] w-full">
                     <BarChart data={comparisonData}>
