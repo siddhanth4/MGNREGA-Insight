@@ -140,7 +140,7 @@ export default function Dashboard() {
       color: 'hsl(var(--primary))',
     },
     fundsUtilized: {
-      label: 'Funds Utilized (₹ Lakhs)',
+      label: 'Funds Utilized (Rs. Lakhs)',
       color: 'hsl(var(--accent))',
     },
   };
@@ -189,7 +189,7 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-bold text-foreground/80">State</label>
-          <Select onValuechange={handleStateChange} defaultValue={selectedState?.name}>
+          <Select onValueChange={handleStateChange} defaultValue={selectedState?.name}>
             <SelectTrigger className="h-12 rounded-lg text-base">
               <SelectValue placeholder="Select a state" />
             </SelectTrigger>
@@ -244,7 +244,7 @@ export default function Dashboard() {
                 <IndianRupee className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">₹{performance?.totalFundsUtilized.toLocaleString()} L</div>
+                <div className="text-3xl font-bold">Rs. {performance?.totalFundsUtilized.toLocaleString()} L</div>
                 <p className="text-xs text-muted-foreground">Total funds spent</p>              
               </CardContent>
             </Card>
@@ -254,7 +254,7 @@ export default function Dashboard() {
                  <IndianRupee className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">₹{performance?.averageWage.toLocaleString()}</div>
+                <div className="text-3xl font-bold">Rs. {performance?.averageWage.toLocaleString()}</div>
                 <p className="text-xs text-muted-foreground">Average daily wage paid</p>
               </CardContent>
             </Card>
@@ -282,7 +282,7 @@ export default function Dashboard() {
                     <CartesianGrid vertical={false} strokeDasharray="3 3" />
                     <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
                     <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(value) => (value as number / 1000) + 'k'}/>
-                    <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(value) => `₹${(value as number / 100)}L`}/>
+                    <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(value) => `Rs. ${(value as number / 100)}L`}/>
                     <Tooltip content={<ChartTooltipContent indicator="dot" />} />
                     <Line yAxisId="left" dataKey="personDays" type="monotone" stroke="var(--color-personDays)" strokeWidth={3} dot={{r: 4}} name="Person-Days" />
                     <Line yAxisId="right" dataKey="fundsUtilized" type="monotone" stroke="var(--color-fundsUtilized)" strokeWidth={3} dot={{r: 4}} name="Funds Utilized" />
