@@ -22,6 +22,7 @@ export async function getAiSummaryAction(
     return summary;
   } catch (error) {
     console.error('AI summary generation failed:', error);
-    return 'Sorry, we couldn\'t generate a summary at this time. Please try again later.';
+    // Return a user-friendly error message
+    return 'Sorry, the summary could not be generated at this time. Please check your connection and try again.';
   }
 }

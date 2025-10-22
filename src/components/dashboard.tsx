@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useTransition } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { BrainCircuit, IndianRupee, MapPin, Users } from 'lucide-react';
+import { BrainCircuit, Briefcase, IndianRupee, MapPin, Users, Wrench } from 'lucide-react';
 
 import type { District, PerformanceData, State } from '@/lib/types';
 import { getAiSummaryAction } from '@/lib/actions';
@@ -36,7 +36,6 @@ export default function Dashboard() {
       try {
         const data = getMockMgnregaData();
         setStates(data);
-        // Set default selection
         if (data.length > 0) {
           const defaultState = data.find(s => s.name === 'Maharashtra') || data[0];
           setSelectedState(defaultState);
@@ -59,10 +58,10 @@ export default function Dashboard() {
 
     loadData();
 
-    // A mock function to suggest a district based on location.
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        // Mock suggestion for Pune, India
         if (latitude > 18.4 && latitude < 18.6 && longitude > 73.8 && longitude < 74.0) {
           setLocationSuggestion('Pune');
         }
@@ -138,60 +137,60 @@ export default function Dashboard() {
   const chartConfig: ChartConfig = {
     personDays: {
       label: 'Person-Days',
-      color: 'hsl(var(--chart-1))',
+      color: 'hsl(var(--primary))',
     },
     fundsUtilized: {
-      label: 'Funds Utilized (Rs. Lakhs)',
-      color: 'hsl(var(--chart-2))',
+      label: 'Funds Utilized (₹ Lakhs)',
+      color: 'hsl(var(--accent))',
     },
   };
   
   const comparisonChartConfig: ChartConfig = {
     personDays: {
       label: "Person-Days",
-      color: "hsl(var(--chart-2))",
+      color: "hsl(var(--primary))",
     },
   };
 
   if (isLoading) {
     return (
-      <div className="grid gap-6">
+      <div className="grid animate-pulse gap-6">
         <div className="grid md:grid-cols-2 gap-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 w-full" />)}
+          {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-32 w-full rounded-xl" />)}
         </div>
         <div className="grid gap-6 lg:grid-cols-2">
-          <Skeleton className="h-80 w-full" />
-          <Skeleton className="h-80 w-full" />
+          <Skeleton className="h-80 w-full rounded-xl" />
+          <Skeleton className="h-80 w-full rounded-xl" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-6">
-      {locationSuggestion && !isLoading && (
-         <Alert>
-           <MapPin className="h-4 w-4" />
-           <AlertTitle>Location Suggestion</AlertTitle>
-           <AlertDescription className="flex items-center justify-between">
-             We think you're in {locationSuggestion}. Would you like to see data for this district?
-             <div className="space-x-2">
-                <Button onClick={handleUseSuggestion} size="sm">Yes, use {locationSuggestion}</Button>
+    <div className="grid gap-8">
+      {!isLocating && locationSuggestion && (
+         <Alert className="bg-card shadow-md">
+           <MapPin className="h-5 w-5 text-primary" />
+           <AlertTitle className="font-bold">Location Suggestion</AlertTitle>
+           <AlertDescription className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+             <p>We think you're in {locationSuggestion}. Would you like to see data for this district?</p>
+             <div className="flex-shrink-0 space-x-2">
+                <Button onClick={handleUseSuggestion} size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">Yes, use {locationSuggestion}</Button>
                 <Button onClick={() => setLocationSuggestion(null)} size="sm" variant="outline">No, thanks</Button>
              </div>
            </AlertDescription>
          </Alert>
       )}
       
-      <div className="grid md:grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium">State</label>
-          <Select onValueChange={handleStateChange} value={selectedState?.name}>
-            <SelectTrigger>
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-foreground/80">State</label>
+          <Select onValuechange={handleStateChange} defaultValue={selectedState?.name}>
+            <SelectTrigger className="h-12 rounded-lg text-base">
               <SelectValue placeholder="Select a state" />
             </SelectTrigger>
             <SelectContent>
@@ -203,10 +202,10 @@ export default function Dashboard() {
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <label className="text-sm font-medium">District</label>
+        <div className="space-y-2">
+          <label className="text-sm font-bold text-foreground/80">District</label>
           <Select onValueChange={handleDistrictChange} value={selectedDistrict?.name} disabled={!selectedState}>
-            <SelectTrigger>
+            <SelectTrigger className="h-12 rounded-lg text-base">
               <SelectValue placeholder="Select a district" />
             </SelectTrigger>
             <SelectContent>
@@ -221,7 +220,7 @@ export default function Dashboard() {
       </div>
 
       {!selectedDistrict ? (
-        <Card>
+        <Card className="rounded-xl shadow-md">
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">Please select a state and district to view performance data.</p>
           </CardContent>
@@ -229,83 +228,83 @@ export default function Dashboard() {
       ) : (
         <>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card className="rounded-xl shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Person-Days Generated</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-base font-bold">Person-Days</CardTitle>
+                <Users className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{performance?.totalPersonDays.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">Total for the last year</p>
+                <div className="text-3xl font-bold">{performance?.totalPersonDays.toLocaleString()}</div>
+                <p className="text-xs text-muted-foreground">Total work days generated</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="rounded-xl shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Funds Utilized</CardTitle>
-                <IndianRupee className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-base font-bold">Funds Utilized</CardTitle>
+                <IndianRupee className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">Rs. {performance?.totalFundsUtilized.toLocaleString()} L</div>
-                <p className="text-xs text-muted-foreground">Total for the last year</p>              
+                <div className="text-3xl font-bold">₹{performance?.totalFundsUtilized.toLocaleString()} L</div>
+                <p className="text-xs text-muted-foreground">Total funds spent</p>              
               </CardContent>
             </Card>
-            <Card>
+            <Card className="rounded-xl shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Average Daily Wage</CardTitle>
-                 <IndianRupee className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-base font-bold">Average Wage</CardTitle>
+                 <IndianRupee className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">Rs. {performance?.averageWage.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">Compared to state average</p>
+                <div className="text-3xl font-bold">₹{performance?.averageWage.toLocaleString()}</div>
+                <p className="text-xs text-muted-foreground">Average daily wage paid</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="rounded-xl shadow-md">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Works Completed</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-base font-bold">Works Completed</CardTitle>
+                <Briefcase className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{performance?.worksCompleted.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground">Total infrastructure projects</p>
+                <div className="text-3xl font-bold">{performance?.worksCompleted.toLocaleString()}</div>
+                <p className="text-xs text-muted-foreground">Total projects finished</p>
               </CardContent>
             </Card>
           </div>
           
           <div className="grid gap-6 lg:grid-cols-2">
-             <Card>
+             <Card className="rounded-xl shadow-md">
               <CardHeader>
-                <CardTitle>Historical Performance</CardTitle>
-                <CardDescription>Person-days generated and funds utilized over the last 12 months.</CardDescription>
+                <CardTitle className="font-bold">Last 12 Months</CardTitle>
+                <CardDescription>How performance has changed over time.</CardDescription>
               </CardHeader>
               <CardContent>
                 <ChartContainer config={chartConfig} className="aspect-video h-[250px] w-full">
                   <LineChart data={performance?.historicalData}>
-                    <CartesianGrid vertical={false} />
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
                     <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
                     <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(value) => (value as number / 1000) + 'k'}/>
-                    <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(value) => `Rs. ${(value as number / 100)} L`}/>
+                    <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(value) => `₹${(value as number / 100)}L`}/>
                     <Tooltip content={<ChartTooltipContent indicator="dot" />} />
-                    <Line yAxisId="left" dataKey="personDays" type="monotone" stroke="var(--color-personDays)" strokeWidth={2} dot={false} name="Person-Days" />
-                    <Line yAxisId="right" dataKey="fundsUtilized" type="monotone" stroke="var(--color-fundsUtilized)" strokeWidth={2} dot={false} name="Funds Utilized" />
+                    <Line yAxisId="left" dataKey="personDays" type="monotone" stroke="var(--color-personDays)" strokeWidth={3} dot={{r: 4}} name="Person-Days" />
+                    <Line yAxisId="right" dataKey="fundsUtilized" type="monotone" stroke="var(--color-fundsUtilized)" strokeWidth={3} dot={{r: 4}} name="Funds Utilized" />
                   </LineChart>
                 </ChartContainer>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="rounded-xl shadow-md">
               <CardHeader>
-                <CardTitle>Comparative Analysis</CardTitle>
+                <CardTitle className="font-bold">District Comparison</CardTitle>
                 <CardDescription>How {selectedDistrict.name} compares to other districts in {selectedState?.name}.</CardDescription>
-              </Header>
+              </CardHeader>
               <CardContent>
                  <ChartContainer config={comparisonChartConfig} className="aspect-video h-[250px] w-full">
                     <BarChart data={comparisonData}>
-                      <CartesianGrid vertical={false} />
-                      <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
+                      <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                      <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} tick={{ fontSize: 10 }} />
                       <YAxis tickLine={false} axisLine={false} tickFormatter={(value) => (value as number / 100000) + 'L'}/>
-                      <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} content={<ChartTooltipContent hideLabel />} />
-                      <Bar dataKey="personDays" radius={4}>
+                      <Tooltip cursor={{ fill: 'hsl(var(--background))' }} content={<ChartTooltipContent hideLabel />} />
+                      <Bar dataKey="personDays" radius={8}>
                         {comparisonData.map((entry) => (
-                           <Cell key={entry.name} fill={entry.isCurrent ? "hsl(var(--chart-1))" : "hsl(var(--chart-2))"} opacity={entry.isCurrent ? 1 : 0.4} />
+                           <Cell key={entry.name} fill={entry.isCurrent ? "hsl(var(--primary))" : "hsl(var(--accent))"} opacity={entry.isCurrent ? 1 : 0.4} />
                         ))}
                       </Bar>
                     </BarChart>
@@ -314,28 +313,29 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          <Card>
+          <Card className="rounded-xl shadow-md">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 font-bold">
                 <BrainCircuit className="h-6 w-6 text-primary" />
-                AI-Powered Plain Language Summary
+                AI-Powered Summary
               </CardTitle>
               <CardDescription>An easy-to-understand summary of {selectedDistrict.name}'s performance.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {isAiLoading ? (
-                <div className="space-y-2">
+                <div className="space-y-2 pt-2">
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-3/4" />
                 </div>
               ) : aiSummary ? (
-                <p className="text-sm leading-relaxed">{aiSummary}</p>
+                <div className="prose prose-sm max-w-full text-foreground/90 leading-relaxed" dangerouslySetInnerHTML={{ __html: aiSummary.replace(/\n/g, '<br />') }} />
               ) : (
-                <p className="text-sm text-muted-foreground">Click the button to generate an AI summary.</p>
+                <p className="text-sm text-muted-foreground pt-2">Click the button to get a simple summary of the data.</p>
               )}
-              <Button onClick={handleGenerateSummary} disabled={isAiLoading}>
-                {isAiLoading ? 'Generating...' : 'Generate Summary'}
+              <Button onClick={handleGenerateSummary} disabled={isAiLoading} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                <Wrench className="mr-2 h-4 w-4 animate-spin hidden" />
+                {isAiLoading ? 'Generating...' : 'Generate Simple Summary'}
               </Button>
             </CardContent>
           </Card>

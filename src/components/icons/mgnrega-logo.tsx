@@ -14,11 +14,10 @@ export function MgnregaLogo(props: SVGProps<SVGSVGElement>) {
       strokeLinejoin="round"
       {...props}
     >
-      <path d="M7 20h10" />
-      <path d="M10 20c0-2.5-1.5-5-5-5" />
-      <path d="M14 20c0-2.5 1.5-5 5-5" />
-      <path d="M12 15c0-4 4-4 4-8" />
-      <path d="M8 11c0-4-4-4-4-8" />
+      <path d="M12 22v-6" />
+      <path d="M12 8V2" />
+      <path d="m15 11-2-2-2 2" />
+      <path d="M12 16a6 6 0 0 0-6 6h12a6 6 0 0 0-6-6Z" />
     </svg>
   );
 }
