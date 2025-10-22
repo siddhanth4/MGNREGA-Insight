@@ -29,43 +29,21 @@ export async function generatePlainLanguageSummary(
   return generatePlainLanguageSummaryFlow(input);
 }
 
-const fetchDataTool = ai.defineTool({
-  name: 'fetchMGNREGAData',
-  description: 'Fetches MGNREGA data for a specific district and state from the data.gov.in API.',
-  inputSchema: z.object({
-    districtName: z.string().describe('The name of the district.'),
-    stateName: z.string().describe('The name of the state.'),
-  }),
-  outputSchema: z.string(),
-  async resolve(input) {
-    // TODO: Implement the actual data fetching logic here using the data.gov.in API.
-    // This is a placeholder implementation.
-    console.log("fetchMGNREGAData called with " + JSON.stringify(input));
-    return `{ \"status\": \"success\", \"data\": { \"personDaysGenerated\": 100000, \"fundsUtilized\": 5000000 } }`;
-  },
-});
-
 const prompt = ai.definePrompt({
   name: 'generatePlainLanguageSummaryPrompt',
   input: {schema: GeneratePlainLanguageSummaryInputSchema},
   output: {schema: GeneratePlainLanguageSummaryOutputSchema},
-  tools: [fetchDataTool],
-  prompt: `You are an AI assistant that generates plain language summaries of MGNREGA performance for users with low data literacy. The summary should be easy to understand and highlight key achievements, challenges, and trends.
+  prompt: `You are an AI assistant that generates plain language summaries of MGNREGA performance for users with low data literacy. The summary should be easy to understand and highlight key achievements, challenges, and trends based *only* on the data provided.
 
-  Here is the MGNREGA performance data for the district:
+  Here is the MGNREGA performance data for {{districtName}}, {{stateName}}:
   {{performanceData}}
 
-  District Name: {{districtName}}
-  State Name: {{stateName}}
+  Consider the following when creating the summary:
+  - Key achievements: Significant accomplishments in MGNREGA implementation reflected in the data.
+  - Challenges: Obstacles faced during MGNREGA implementation that can be inferred from the data.
+  - Trends: Notable patterns or changes in MGNREGA performance shown in the data.
 
-  Consider the following:
-  - Key achievements: Significant accomplishments in MGNREGA implementation.
-  - Challenges: Obstacles faced during MGNREGA implementation.
-  - Trends: Notable patterns or changes in MGNREGA performance over time.
-
-  Use the fetchDataTool if you need to retrieve more current information about MGNREGA
-
-  Write a concise and informative plain language summary of the district\'s MGNREGA performance.`,
+  Write a concise and informative plain language summary of the district's MGNREGA performance based *only* on the provided data. Do not invent or fetch external data.`,
 });
 
 const generatePlainLanguageSummaryFlow = ai.defineFlow(
