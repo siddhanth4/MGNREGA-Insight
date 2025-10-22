@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useTransition } from 'react';
-import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { BrainCircuit, IndianRupee, MapPin, Users } from 'lucide-react';
 
 import { mgnregaData } from '@/lib/data';
@@ -84,7 +84,15 @@ export default function Dashboard() {
         selectedState.name,
         selectedDistrict.performance
       );
-      setAiSummary(summary);
+      if (typeof summary === 'string') {
+        setAiSummary(summary);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to generate summary.",
+        })
+      }
     });
   };
 
@@ -102,7 +110,7 @@ export default function Dashboard() {
   const chartConfig: ChartConfig = {
     personDays: {
       label: 'Person-Days',
-      color: 'hsl(var(--primary))',
+      color: 'hsl(var(--chart-1))',
     },
     fundsUtilized: {
       label: 'Funds Utilized (Rs. Lakhs)',
@@ -113,6 +121,7 @@ export default function Dashboard() {
   const comparisonChartConfig: ChartConfig = {
     personDays: {
       label: "Person-Days",
+      color: "hsl(var(--chart-3))",
     },
   }
 
@@ -250,7 +259,7 @@ export default function Dashboard() {
                       <Tooltip cursor={{ fill: 'hsl(var(--muted))' }} content={<ChartTooltipContent hideLabel />} />
                       <Bar dataKey="personDays" radius={4}>
                         {comparisonData.map((entry) => (
-                           <div key={entry.name} className={entry.isCurrent ? 'fill-primary' : 'fill-primary/30'} />
+                           <Cell key={entry.name} fill={entry.isCurrent ? "var(--color-personDays)" : "var(--color-personDays)"} opacity={entry.isCurrent ? 1 : 0.3} />
                         ))}
                       </Bar>
                     </BarChart>
