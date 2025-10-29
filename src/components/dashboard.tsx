@@ -246,7 +246,7 @@ export default function Dashboard() {
                 <IndianRupee className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">Rs. {performance?.totalFundsUtilized.toLocaleString(language)} L</div>
+                <div className="text-3xl font-bold">{translations.dashboard.metrics.currency} {performance?.totalFundsUtilized.toLocaleString(language)} L</div>
                 <p className="text-xs text-muted-foreground">{translations.dashboard.metrics.fundsUtilized.description}</p>              
               </CardContent>
             </Card>
@@ -256,7 +256,7 @@ export default function Dashboard() {
                  <IndianRupee className="h-5 w-5 text-primary" />
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">Rs. {performance?.averageWage.toLocaleString(language)}</div>
+                <div className="text-3xl font-bold">{translations.dashboard.metrics.currency} {performance?.averageWage.toLocaleString(language)}</div>
                 <p className="text-xs text-muted-foreground">{translations.dashboard.metrics.averageWage.description}</p>
               </CardContent>
             </Card>
@@ -284,7 +284,7 @@ export default function Dashboard() {
                     <CartesianGrid vertical={false} strokeDasharray="3 3" />
                     <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
                     <YAxis yAxisId="left" tickLine={false} axisLine={false} tickFormatter={(value) => (value as number / 1000) + 'k'}/>
-                    <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(value) => `Rs. ${(value as number / 100)}L`}/>
+                    <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} tickFormatter={(value) => `${translations.dashboard.metrics.currency} ${(value as number / 100)}L`}/>
                     <Tooltip content={<ChartTooltipContent indicator="dot" />} />
                     <Line yAxisId="left" dataKey="personDays" type="monotone" stroke="var(--color-personDays)" strokeWidth={3} dot={{r: 4}} name={translations.dashboard.charts.personDays} />
                     <Line yAxisId="right" dataKey="fundsUtilized" type="monotone" stroke="var(--color-fundsUtilized)" strokeWidth={3} dot={{r: 4}} name={translations.dashboard.charts.fundsUtilized} />

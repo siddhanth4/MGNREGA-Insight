@@ -2,6 +2,8 @@ export const locales = ['en', 'hi', 'mr'] as const;
 export type Locale = typeof locales[number];
 
 export type Translations = {
+  appTitle: string;
+  languageButton: string;
   dashboard: {
     selectors: {
       state: string;
@@ -11,6 +13,7 @@ export type Translations = {
     };
     noData: string;
     metrics: {
+      currency: string;
       personDays: { title: string; description: string };
       fundsUtilized: { title: string; description: string };
       averageWage: { title: string; description: string };
@@ -44,6 +47,8 @@ export type Translations = {
 
 export const translations: Record<Locale, Translations> = {
   en: {
+    appTitle: 'MGNREGA Insight',
+    languageButton: 'Language',
     dashboard: {
       selectors: {
         state: 'State',
@@ -53,6 +58,7 @@ export const translations: Record<Locale, Translations> = {
       },
       noData: 'Please select a state and district to view performance data.',
       metrics: {
+        currency: 'Rs.',
         personDays: { title: 'Person-Days', description: 'Total work days generated' },
         fundsUtilized: { title: 'Funds Utilized', description: 'Total funds spent' },
         averageWage: { title: 'Average Wage', description: 'Average daily wage paid' },
@@ -62,7 +68,7 @@ export const translations: Record<Locale, Translations> = {
         monthly: { title: 'Last 12 Months', description: 'How performance has changed over time.' },
         comparison: { title: 'District Comparison', description: (district, state) => `How ${district} compares to other districts in ${state}.` },
         personDays: 'Person-Days',
-        fundsUtilized: 'Funds Utilized (Rs. Lakhs)',
+        fundsUtilized: 'Funds Utilized (in Lakhs)',
       },
       aiSummary: {
         title: 'AI-Powered Summary',
@@ -84,6 +90,8 @@ export const translations: Record<Locale, Translations> = {
     },
   },
   hi: {
+    appTitle: 'मनरेगा इनसाइट',
+    languageButton: 'भाषा',
     dashboard: {
       selectors: {
         state: 'राज्य',
@@ -93,6 +101,7 @@ export const translations: Record<Locale, Translations> = {
       },
       noData: 'प्रदर्शन डेटा देखने के लिए कृपया एक राज्य और जिला चुनें।',
       metrics: {
+        currency: 'रु.',
         personDays: { title: 'व्यक्ति-दिन', description: 'कुल कार्य दिवस उत्पन्न हुए' },
         fundsUtilized: { title: 'उपयोग की गई धनराशि', description: 'कुल खर्च की गई धनराशि' },
         averageWage: { title: 'औसत मजदूरी', description: 'औसत दैनिक मजदूरी का भुगतान' },
@@ -102,7 +111,7 @@ export const translations: Record<Locale, Translations> = {
         monthly: { title: 'पिछले 12 महीने', description: 'समय के साथ प्रदर्शन कैसे बदला है।' },
         comparison: { title: 'जिला तुलना', description: (district, state) => `${state} के अन्य जिलों की तुलना में ${district} कैसा है।` },
         personDays: 'व्यक्ति-दिन',
-        fundsUtilized: 'उपयोग की गई धनराशि (लाख रुपये)',
+        fundsUtilized: 'उपयोग की गई धनराशि (लाख में)',
       },
       aiSummary: {
         title: 'एआई-संचालित सारांश',
@@ -124,6 +133,8 @@ export const translations: Record<Locale, Translations> = {
     },
   },
   mr: {
+    appTitle: 'मनरेगा इनसाइट',
+    languageButton: 'भाषा',
     dashboard: {
       selectors: {
         state: 'राज्य',
@@ -133,6 +144,7 @@ export const translations: Record<Locale, Translations> = {
       },
       noData: 'कामगिरी डेटा पाहण्यासाठी कृपया एक राज्य आणि जिल्हा निवडा.',
       metrics: {
+        currency: 'रु.',
         personDays: { title: 'मनुष्य-दिवस', description: 'एकूण कामाचे दिवस निर्माण झाले' },
         fundsUtilized: { title: 'वापरलेला निधी', description: 'एकूण खर्च केलेला निधी' },
         averageWage: { title: 'सरासरी मजुरी', description: 'सरासरी दररोज मजुरी दिली' },
@@ -142,7 +154,7 @@ export const translations: Record<Locale, Translations> = {
         monthly: { title: 'मागील १२ महिने', description: 'वेळेनुसार कामगिरी कशी बदलली आहे.' },
         comparison: { title: 'जिल्हा तुलना', description: (district, state) => `${state} मधील इतर जिल्ह्यांच्या तुलनेत ${district} कसे आहे.` },
         personDays: 'मनुष्य-दिवस',
-        fundsUtilized: 'वापरलेला निधी (लाख रुपये)',
+        fundsUtilized: 'वापरलेला निधी (लाखात)',
       },
       aiSummary: {
         title: 'एआय-आधारित सारांश',
