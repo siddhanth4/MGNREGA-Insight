@@ -112,6 +112,7 @@ export default function Dashboard() {
               selectedDistrict.name,
               selectedState.name,
               performanceData,
+              language
           );
           setAiSummary(summary);
         } catch (error) {

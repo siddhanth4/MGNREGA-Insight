@@ -15,6 +15,7 @@ const GeneratePlainLanguageSummaryInputSchema = z.object({
   districtName: z.string().describe('The name of the district.'),
   stateName: z.string().describe('The name of the state.'),
   performanceData: z.string().describe('MGNREGA performance data for the district, in JSON format.'),
+  language: z.string().describe('The language for the summary (e.g., "English", "Hindi", "Marathi").'),
 });
 export type GeneratePlainLanguageSummaryInput = z.infer<typeof GeneratePlainLanguageSummaryInputSchema>;
 
@@ -34,6 +35,8 @@ const prompt = ai.definePrompt({
   input: {schema: GeneratePlainLanguageSummaryInputSchema},
   output: {schema: GeneratePlainLanguageSummaryOutputSchema},
   prompt: `You are an AI assistant that generates plain language summaries of MGNREGA performance for users with low data literacy. The summary should be easy to understand and highlight key achievements, challenges, and trends based *only* on the data provided.
+
+  Generate the summary in {{language}}.
 
   Here is the MGNREGA performance data for {{districtName}}, {{stateName}}:
   {{performanceData}}
