@@ -2,13 +2,13 @@
 
 import { generatePlainLanguageSummary } from '@/ai/flows/generate-plain-language-summary';
 import type { PerformanceData } from '@/lib/types';
-import { translations } from '@/lib/locales';
+import { translations, Locale } from '@/lib/locales';
 
 export async function getAiSummaryAction(
   districtName: string,
   stateName: string,
   performanceData: PerformanceData,
-  language: 'en' | 'hi' | 'mr'
+  language: Locale
 ) {
   try {
     // A simple mapping from locale code to full language name for the prompt

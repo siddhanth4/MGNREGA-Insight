@@ -1,3 +1,9 @@
+export type LocalizedString = {
+  en: string;
+  hi: string;
+  mr: string;
+};
+
 export interface MonthlyData {
   month: string;
   year: number;
@@ -14,11 +20,13 @@ export interface PerformanceData {
 }
 
 export interface District {
-  name: string;
+  id: string;
+  name: LocalizedString;
   performance: PerformanceData;
 }
 
 export interface State {
-  name: string;
+  id: string;
+  name: LocalizedString;
   districts: District[];
 }

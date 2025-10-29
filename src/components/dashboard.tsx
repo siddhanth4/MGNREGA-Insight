@@ -39,7 +39,7 @@ export default function Dashboard() {
         const data = getMockMgnregaData();
         setStates(data);
         if (data.length > 0) {
-          const defaultState = data.find(s => s.name === 'Maharashtra') || data[0];
+          const defaultState = data.find(s => s.name.en === 'Maharashtra') || data[0];
           setSelectedState(defaultState);
           setDistricts(defaultState.districts);
           if (defaultState.districts.length > 0) {
@@ -78,17 +78,17 @@ export default function Dashboard() {
   
   const handleUseSuggestion = () => {
     if (locationSuggestion) {
-      const state = states.find(s => s.districts.some(d => d.name === locationSuggestion));
+      const state = states.find(s => s.districts.some(d => d.name.en === locationSuggestion));
       if (state) {
-        handleStateChange(state.name);
-        handleDistrictChange(locationSuggestion);
+        handleStateChange(state.id);
+        handleDistrictChange(locationSuggestion.toLowerCase());
       }
     }
     setLocationSuggestion(null);
   };
 
-  const handleStateChange = (stateName: string) => {
-    const state = states.find((s) => s.name === stateName);
+  const handleStateChange = (stateId: string) => {
+    const state = states.find((s) => s.id === stateId);
     if (state) {
       setSelectedState(state);
       setDistricts(state.districts);
@@ -97,8 +97,8 @@ export default function Dashboard() {
     }
   };
 
-  const handleDistrictChange = (districtName: string) => {
-    const district = districts.find((d) => d.name === districtName);
+  const handleDistrictChange = (districtId: string) => {
+    const district = districts.find((d) => d.id === districtId);
     setSelectedDistrict(district || null);
     setAiSummary('');
   };
@@ -109,8 +109,8 @@ export default function Dashboard() {
         try {
           const performanceData = selectedDistrict.performance;
           const summary = await getAiSummaryAction(
-              selectedDistrict.name,
-              selectedState.name,
+              selectedDistrict.name[language],
+              selectedState.name[language],
               performanceData,
               language
           );
@@ -131,11 +131,11 @@ export default function Dashboard() {
   const comparisonData = useMemo(() => {
     if (!selectedState || !selectedDistrict) return [];
     return selectedState.districts.map((d) => ({
-      name: d.name,
+      name: d.name[language],
       personDays: d.performance.totalPersonDays,
-      isCurrent: d.name === selectedDistrict.name,
+      isCurrent: d.id === selectedDistrict.id,
     }));
-  }, [selectedState, selectedDistrict]);
+  }, [selectedState, selectedDistrict, language]);
 
   const chartConfig: ChartConfig = {
     personDays: {
@@ -192,14 +192,14 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-sm font-bold text-foreground/80">{translations.dashboard.selectors.state}</label>
-          <Select onValueChange={handleStateChange} defaultValue={selectedState?.name}>
+          <Select onValueChange={handleStateChange} defaultValue={selectedState?.id}>
             <SelectTrigger className="h-12 rounded-lg text-base">
               <SelectValue placeholder={translations.dashboard.selectors.selectState} />
             </SelectTrigger>
             <SelectContent>
               {states.map((s) => (
-                <SelectItem key={s.name} value={s.name}>
-                  {s.name}
+                <SelectItem key={s.id} value={s.id}>
+                  {s.name[language]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -207,14 +207,14 @@ export default function Dashboard() {
         </div>
         <div className="space-y-2">
           <label className="text-sm font-bold text-foreground/80">{translations.dashboard.selectors.district}</label>
-          <Select onValueChange={handleDistrictChange} value={selectedDistrict?.name} disabled={!selectedState}>
+          <Select onValueChange={handleDistrictChange} value={selectedDistrict?.id} disabled={!selectedState}>
             <SelectTrigger className="h-12 rounded-lg text-base">
               <SelectValue placeholder={translations.dashboard.selectors.selectDistrict} />
             </SelectTrigger>
             <SelectContent>
               {districts.map((d) => (
-                <SelectItem key={d.name} value={d.name}>
-                  {d.name}
+                <SelectItem key={d.id} value={d.id}>
+                  {d.name[language]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -296,7 +296,7 @@ export default function Dashboard() {
             <Card className="rounded-xl shadow-md">
               <CardHeader>
                 <CardTitle className="font-bold">{translations.dashboard.charts.comparison.title}</CardTitle>
-                <CardDescription>{translations.dashboard.charts.comparison.description(selectedDistrict.name, selectedState?.name || '')}</CardDescription>
+                <CardDescription>{translations.dashboard.charts.comparison.description(selectedDistrict.name[language], selectedState?.name[language] || '')}</CardDescription>
               </CardHeader>
               <CardContent>
                  <ChartContainer config={comparisonChartConfig} className="aspect-video h-[250px] w-full">
@@ -322,7 +322,7 @@ export default function Dashboard() {
                 <BrainCircuit className="h-6 w-6 text-primary" />
                 {translations.dashboard.aiSummary.title}
               </CardTitle>
-              <CardDescription>{translations.dashboard.aiSummary.description(selectedDistrict.name)}</CardDescription>
+              <CardDescription>{translations.dashboard.aiSummary.description(selectedDistrict.name[language])}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {isAiLoading ? (

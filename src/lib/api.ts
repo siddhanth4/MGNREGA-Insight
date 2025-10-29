@@ -1,4 +1,4 @@
-import type { State, District, PerformanceData, MonthlyData } from '@/lib/types';
+import type { State, District, PerformanceData, MonthlyData, LocalizedString } from '@/lib/types';
 
 // Helper to generate mock historical data
 const generateHistoricalData = (basePersonDays: number, baseFunds: number): MonthlyData[] => {
@@ -21,6 +21,14 @@ const generateHistoricalData = (basePersonDays: number, baseFunds: number): Mont
   return data.reverse();
 };
 
+const districtTranslations: Record<string, LocalizedString> = {
+  'Pune': { en: 'Pune', hi: 'पुणे', mr: 'पुणे' },
+  'Mumbai': { en: 'Mumbai', hi: 'मुंबई', mr: 'मुंबई' },
+  'Nagpur': { en: 'Nagpur', hi: 'नागपुर', mr: 'नागपूर' },
+  'Nashik': { en: 'Nashik', hi: 'नाशिक', mr: 'नाशिक' },
+  'Thane': { en: 'Thane', hi: 'ठाणे', mr: 'ठाणे' },
+};
+
 // Main function to get mock data
 export const getMockMgnregaData = (): State[] => {
   const mockRawData = [
@@ -40,7 +48,11 @@ export const getMockMgnregaData = (): State[] => {
     if (!stateName || !districtName) return;
 
     if (!stateMap.has(stateName)) {
-      stateMap.set(stateName, { name: stateName, districts: [] });
+      stateMap.set(stateName, { 
+        id: stateName.toLowerCase(),
+        name: { en: 'Maharashtra', hi: 'महाराष्ट्र', mr: 'महाराष्ट्र' },
+        districts: [] 
+      });
     }
 
     const state = stateMap.get(stateName);
@@ -58,7 +70,8 @@ export const getMockMgnregaData = (): State[] => {
       };
 
       const district: District = {
-        name: districtName,
+        id: districtName.toLowerCase(),
+        name: districtTranslations[districtName],
         performance: performance,
       };
 
@@ -67,7 +80,7 @@ export const getMockMgnregaData = (): State[] => {
   });
 
   return Array.from(stateMap.values()).map(state => {
-    state.districts.sort((a, b) => a.name.localeCompare(b.name));
+    state.districts.sort((a, b) => a.name.en.localeCompare(b.name.en));
     return state;
-  }).sort((a, b) => a.name.localeCompare(b.name));
+  }).sort((a, b) => a.name.en.localeCompare(b.name.en));
 };
