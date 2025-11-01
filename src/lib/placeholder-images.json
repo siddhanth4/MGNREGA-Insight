@@ -1,0 +1,10 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "A background image showing a rural landscape in India, fitting for the MGNREGA theme.",
+      "imageUrl": "https://images.unsplash.com/flagged/photo-1574097656146-0b43b7660cb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxydXJhbCUyMGluZGlhfGVufDB8fHx8MTc2MTA4MTQwM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "rural india"
+    }
+  ]
+}

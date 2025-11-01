@@ -1,0 +1,34 @@
+"use client"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { useLanguage } from "@/context/language-context"
+import { Globe } from "lucide-react"
+
+export function LanguageSwitcher() {
+  const { language, setLanguage, translations } = useLanguage()
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">
+          <Globe className="mr-2 h-4 w-4" />
+          {translations.languageButton}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuRadioGroup value={language} onValueChange={setLanguage}>
+          <DropdownMenuRadioItem value="en">English</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="hi">हिन्दी</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="mr">मराठी</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
